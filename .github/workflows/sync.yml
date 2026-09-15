@@ -1,0 +1,24 @@
+name: Auto Sports Data Sync
+
+on:
+  schedule:
+    - cron: '0 18 * * 0' # UTC 기준 일요일 18:00 (한국 시간 월요일 03:00)
+  workflow_dispatch: # 버튼 클릭으로 수동 실행 기능 허용
+
+jobs:
+  sync-database:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v3
+
+      - name: 파이썬 환경 설정
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: 동기화 스크립트 실행
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python sync_sports.py
